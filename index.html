@@ -1260,13 +1260,13 @@
             <div class="traffic-row">
                 <div class="traffic-item">
                     <!-- REPLACE: Connect to real analytics for live weekly count -->
-                    <span class="traffic-num" id="weeklyCount">1,247</span>
+                    <span class="traffic-num" id="weeklyCount">0</span>
                     <p class="traffic-label">Weekly</p>
                 </div>
                 <div class="traffic-divider"></div>
                 <div class="traffic-item">
                     <!-- REPLACE: Connect to real analytics for live monthly count -->
-                    <span class="traffic-num" id="monthlyCount">5,830</span>
+                    <span class="traffic-num" id="monthlyCount">0</span>
                     <p class="traffic-label">Monthly</p>
                 </div>
             </div>
@@ -1324,6 +1324,64 @@
         // Simulated traffic counter — REPLACE with real analytics API call
         // Example: fetch('https://your-analytics-api.com/counts').then(...)
         // For now, values are static placeholders set in the HTML above.
+        // Real traffic counter using JSONbin API
+        const API_URL = 'https://api.jsonbin.io/v3/b/YOUR_BIN_ID'; // ← REPLACE with your bin URL
+        const API_KEY = 'YOUR_MASTER_KEY'; // ← REPLACE with your API key
+
+        async function updateTrafficCounter() {
+            try {
+                // Fetch current counts from JSONbin
+                const response = await fetch(API_URL, {
+                    headers: { 'X-Master-Key': API_KEY }
+                });
+                
+                if (!response.ok) throw new Error('Failed to fetch');
+                
+                const result = await response.json();
+                let counts = result.record;
+                
+                const now = new Date();
+                const currentWeekStart = new Date(now);
+                currentWeekStart.setDate(now.getDate() - now.getDay()); // Sunday
+                const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+                
+                // Reset weekly counter if it's a new week
+                if (!counts.weekStart || new Date(counts.weekStart) < currentWeekStart) {
+                    counts.weekly = 0;
+                    counts.weekStart = currentWeekStart.toISOString().split('T')[0];
+                }
+                
+                // Reset monthly counter if it's a new month
+                if (!counts.monthStart || new Date(counts.monthStart) < currentMonthStart) {
+                    counts.monthly = 0;
+                    counts.monthStart = currentMonthStart.toISOString().split('T')[0];
+                }
+                
+                // Increment both counters
+                counts.weekly++;
+                counts.monthly++;
+                
+                // Update the display
+                document.getElementById('weeklyCount').textContent = counts.weekly.toLocaleString();
+                document.getElementById('monthlyCount').textContent = counts.monthly.toLocaleString();
+                
+                // Save updated counts back to JSONbin
+                await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': API_KEY
+                    },
+                    body: JSON.stringify(counts)
+                });
+                
+            } catch (error) {
+                console.log('Counter update failed, keeping current display');
+            }
+        }
+
+        // Run counter on page load
+        updateTrafficCounter();
     </script>
 
 </body>
