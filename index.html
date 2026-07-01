@@ -1219,7 +1219,7 @@
                     <i class="fa-brands fa-whatsapp"></i>
                 </a>
                 <!-- REPLACE: Set your email address in href -->
-                <a href="https://mail.google.com/mail/u/0/?fs=1&to=timotiuskris09@gmail.com&tf=cm" target="_blank" rel="noopener" class="contact-box" title="Email">
+                <a href="#" id="emailLink" class="contact-box" title="Email" onclick="handleEmailClick(event)">
                     <i class="fa-solid fa-envelope"></i>
                 </a>
                 <!-- REPLACE: Set your Instagram profile URL -->
@@ -1379,6 +1379,20 @@
 
         // Run counter on page load
         updateTrafficCounter();
+
+        // Handle email click: Gmail on desktop, mailto on mobile
+        function handleEmailClick(event) {
+            event.preventDefault();
+            const isMobile = /Android|iPhone|iPad|iPod|webOS/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // Mobile: open default mail app
+                window.location.href = 'mailto:timotiuskris09@email.com';
+            } else {
+                // Desktop: open Gmail compose
+                window.location.href = 'https://mail.google.com/mail/u/0/?fs=1&to=timotiuskris09@email.com&tf=cm';
+            }
+        }
     </script>
 
 </body>
