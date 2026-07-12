@@ -404,8 +404,8 @@
         }
         .project-chart-placeholder {
             flex-shrink: 0;
-            width: 80px;
-            height: 60px;
+            width: 100px;
+            height: 100px;
             background: rgba(255, 255, 255, 0.15);
             border-radius: var(--radius-sm);
             display: flex;
@@ -928,11 +928,7 @@
                 <div class="project-card" onclick="openProjectOverlay(this)">
                     <div class="project-card-header">
                         <div class="project-chart-placeholder">
-                            <div class="mini-bar" style="height:60%;"></div>
-                            <div class="mini-bar" style="height:85%;"></div>
-                            <div class="mini-bar" style="height:45%;"></div>
-                            <div class="mini-bar" style="height:95%;"></div>
-                            <div class="mini-bar" style="height:55%;"></div>
+                            <img src="Logo Joybox.png" alt="Joybox">
                         </div>
                         <div class="project-info">
                             <p class="project-title">Toy E-Commerce Performance Analysis</p>
@@ -972,6 +968,8 @@
                             <br>
                             <strong>Results: </strong>
                             Leak emerge when I found there is gap between desktop and mobile users. 
+                            After digging deeper, I found from funnel analysis that the e-commerce platform have high bounce rate.
+                            To verify it, I analyzed the average session time and found that the customers having hard time finding the product catalogue.
                         </div>
                     </div>
                 </div>
