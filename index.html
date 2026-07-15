@@ -61,17 +61,22 @@
             background: var(--bg);
         }
 
+        /* ---- Sidebar container – no position sticky here anymore ---- */
         .sidebar-col {
             grid-area: right;
+            padding: 0;
+            margin: 0;
+            z-index: 100;
+        }
+
+        /* The actual sticky navigation wrapper – this is what sticks */
+        .sticky-nav-wrapper {
             position: sticky;
             top: 30px;
-            align-self: start;
-            height: fit-content;
-            padding: 30px 16px 30px 0;
-            z-index: 100;
             display: flex;
             flex-direction: column;
             gap: 20px;
+            padding: 30px 16px 30px 0;
         }
 
         .nav-panel {
@@ -1176,19 +1181,21 @@
 
     </main>
 
-    <!-- Desktop sidebar (hidden on mobile) -->
+    <!-- Desktop sidebar – now uses an inner sticky wrapper -->
     <div class="sidebar-col" id="sidebarCol">
-        <nav class="nav-panel" id="navPanel">
-            <p class="nav-title">Navigate</p>
-            <ul>
-                <li><a href="#about" onclick="setActiveLink(this)"><i class="fa-solid fa-user"></i> About Me</a></li>
-                <li><a href="#journey" onclick="setActiveLink(this)"><i class="fa-solid fa-road"></i> My Journey</a></li>
-                <li><a href="#projects" onclick="setActiveLink(this)"><i class="fa-solid fa-chart-bar"></i> Project</a></li>
-                <li><a href="#tools" onclick="setActiveLink(this)"><i class="fa-solid fa-screwdriver-wrench"></i> Tools</a></li>
-                <li><a href="#cultures" onclick="setActiveLink(this)"><i class="fa-solid fa-heart"></i> Cultures &amp; Hobbies</a></li>
-                <li><a href="#contact" onclick="setActiveLink(this)"><i class="fa-solid fa-envelope"></i> Contact</a></li>
-            </ul>
-        </nav>
+        <div class="sticky-nav-wrapper">
+            <nav class="nav-panel" id="navPanel">
+                <p class="nav-title">Navigate</p>
+                <ul>
+                    <li><a href="#about" onclick="setActiveLink(this)"><i class="fa-solid fa-user"></i> About Me</a></li>
+                    <li><a href="#journey" onclick="setActiveLink(this)"><i class="fa-solid fa-road"></i> My Journey</a></li>
+                    <li><a href="#projects" onclick="setActiveLink(this)"><i class="fa-solid fa-chart-bar"></i> Project</a></li>
+                    <li><a href="#tools" onclick="setActiveLink(this)"><i class="fa-solid fa-screwdriver-wrench"></i> Tools</a></li>
+                    <li><a href="#cultures" onclick="setActiveLink(this)"><i class="fa-solid fa-heart"></i> Cultures &amp; Hobbies</a></li>
+                    <li><a href="#contact" onclick="setActiveLink(this)"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+                </ul>
+            </nav>
+        </div>
     </div>
 
     <!-- Mobile navigation toggle button -->
