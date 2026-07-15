@@ -34,6 +34,7 @@
         html {
             scroll-behavior: smooth;
             font-size: 16px;
+            overflow-x: hidden;
         }
 
         body {
@@ -45,6 +46,7 @@
             grid-template-columns: var(--left-pad) var(--content-width) var(--sidebar-width);
             grid-template-areas: "left content right";
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .left-blank {
@@ -644,21 +646,25 @@
         .nav-toggle-btn {
             display: none; /* hidden on desktop */
             position: fixed;
-            right: 10px;
+            right: 0;
             top: 50%;
             transform: translateY(-50%);
             z-index: 300;
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             background: var(--shape);
-            border-radius: 50%;
-            box-shadow: var(--shadow);
-            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px 0 0 8px;
+            box-shadow: -2px 2px 10px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.3);
             color: #fff;
-            font-size: 1.2rem;
+            font-size: 1rem;
             cursor: pointer;
             justify-content: center;
             align-items: center;
+            transition: opacity 0.3s ease, visibility 0.3s;
+        }
+        .nav-toggle-btn i {
+            font-size: 0.9rem;
         }
         .nav-overlay {
             display: none; /* hidden on desktop */
@@ -762,9 +768,20 @@
             .sidebar-col {
                 display: none !important;
             }
-            /* Show the mobile nav toggle and overlay */
+            /* Show mobile nav toggle (hidden by default, visible on activity) */
             .nav-toggle-btn {
                 display: flex;
+                opacity: 0;
+                visibility: hidden;
+            }
+            .nav-toggle-btn.visible {
+                opacity: 1;
+                visibility: visible;
+            }
+            /* When overlay open, force hide the toggle button */
+            .nav-toggle-btn.overlay-open {
+                opacity: 0 !important;
+                visibility: hidden !important;
             }
             .nav-overlay {
                 display: block;
@@ -1010,18 +1027,10 @@
                     </div>
                     <div class="project-analysis">
                         <div class="analysis-charts-column">
-                            <div class="analysis-chart-placeholder">
-                                <img src="DEEPP1.png" alt="Descriptive">
-                            </div>
-                            <div class="analysis-chart-placeholder">
-                                <img src="DEEPP2.png" alt="RPR">
-                            </div>
-                            <div class="analysis-chart-placeholder">
-                                <img src="DEEPP3.png" alt="Cohort">
-                            </div>
-                            <div class="analysis-chart-placeholder">
-                                <img src="DEEPP4.png" alt="Funnel">
-                            </div>
+                            <div class="analysis-chart-placeholder"><img src="DEEPP1.png" alt="Descriptive"></div>
+                            <div class="analysis-chart-placeholder"><img src="DEEPP2.png" alt="RPR"></div>
+                            <div class="analysis-chart-placeholder"><img src="DEEPP3.png" alt="Cohort"></div>
+                            <div class="analysis-chart-placeholder"><img src="DEEPP4.png" alt="Funnel"></div>
                         </div>
                         <div class="analysis-desc">
                             <strong>About:</strong> Market performance analysis focus on platform performance.
@@ -1176,7 +1185,6 @@
                 <li><a href="#contact" onclick="setActiveLink(this)"><i class="fa-solid fa-envelope"></i> Contact</a></li>
             </ul>
         </nav>
-        <!-- Traffic panel removed from sidebar -->
     </div>
 
     <!-- Mobile navigation toggle button -->
@@ -1221,7 +1229,6 @@
             const imgs = document.querySelectorAll('img.responsive-img');
             const isSmall = window.innerWidth <= 768;
             imgs.forEach(img => {
-                // Store original src if not already saved
                 if (!img.dataset.originalSrc) {
                     img.dataset.originalSrc = img.src;
                 }
@@ -1305,26 +1312,46 @@
             navOverlay.classList.add('open');
             navBackdrop.classList.add('show');
             document.body.style.overflow = 'hidden';
+            // hide toggle button when overlay is open
+            navToggleBtn.classList.add('overlay-open');
         }
 
         function closeNavOverlay() {
             navOverlay.classList.remove('open');
             navBackdrop.classList.remove('show');
             document.body.style.overflow = '';
+            navToggleBtn.classList.remove('overlay-open');
         }
 
         navToggleBtn.addEventListener('click', openNavOverlay);
         navOverlayClose.addEventListener('click', closeNavOverlay);
         navBackdrop.addEventListener('click', closeNavOverlay);
 
-        // Swipe from right edge to open overlay
+        // ---------- Activity-based toggle visibility (mobile only) ----------
+        let activityTimer;
+        function showToggleTemporarily() {
+            if (window.innerWidth > 768) return; // only mobile
+            navToggleBtn.classList.add('visible');
+            clearTimeout(activityTimer);
+            activityTimer = setTimeout(() => {
+                navToggleBtn.classList.remove('visible');
+            }, 2000);
+        }
+
+        // Show on scroll or touch
+        window.addEventListener('scroll', showToggleTemporarily, { passive: true });
+        document.addEventListener('touchstart', showToggleTemporarily, { passive: true });
+        // Also show on click anywhere (tap)
+        document.addEventListener('click', showToggleTemporarily);
+
+        // Swipe from right edge to open overlay (only if button is visible)
         let touchStartX = 0;
         document.addEventListener('touchstart', function(e) {
             touchStartX = e.touches[0].clientX;
-        }, {passive: true});
+        }, { passive: true });
 
         document.addEventListener('touchend', function(e) {
-            if (!touchStartX) return;
+            if (!touchStartX || window.innerWidth > 768) return;
             const touchEndX = e.changedTouches[0].clientX;
             const edgeZone = window.innerWidth - 40; // 40px from right edge
             const swipeDistance = touchStartX - touchEndX;
@@ -1336,7 +1363,6 @@
 
         // ---------- Navigation active link ----------
         function setActiveLink(link) {
-            // Update both desktop and mobile navs
             document.querySelectorAll('.nav-panel ul li a').forEach(a => a.classList.remove('active'));
             link.classList.add('active');
         }
