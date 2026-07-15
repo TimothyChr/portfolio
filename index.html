@@ -67,7 +67,7 @@
             top: 30px;
             align-self: start;
             height: fit-content;
-            padding: 30px 16px;
+            padding: 30px 16px 30px 0;
             z-index: 100;
             display: flex;
             flex-direction: column;
@@ -426,10 +426,14 @@
             background: rgba(255, 255, 255, 0.15);
             border-radius: var(--radius-sm);
             display: flex;
-            align-items: flex-end;
-            justify-content: space-around;
-            padding: 0px 0px;
-            gap: 0px;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .project-chart-placeholder img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
         .mini-bar {
             width: 12px;
@@ -1312,7 +1316,6 @@
             navOverlay.classList.add('open');
             navBackdrop.classList.add('show');
             document.body.style.overflow = 'hidden';
-            // hide toggle button when overlay is open
             navToggleBtn.classList.add('overlay-open');
         }
 
@@ -1330,7 +1333,7 @@
         // ---------- Activity-based toggle visibility (mobile only) ----------
         let activityTimer;
         function showToggleTemporarily() {
-            if (window.innerWidth > 768) return; // only mobile
+            if (window.innerWidth > 768) return;
             navToggleBtn.classList.add('visible');
             clearTimeout(activityTimer);
             activityTimer = setTimeout(() => {
@@ -1338,13 +1341,11 @@
             }, 2000);
         }
 
-        // Show on scroll or touch
         window.addEventListener('scroll', showToggleTemporarily, { passive: true });
         document.addEventListener('touchstart', showToggleTemporarily, { passive: true });
-        // Also show on click anywhere (tap)
         document.addEventListener('click', showToggleTemporarily);
 
-        // Swipe from right edge to open overlay (only if button is visible)
+        // Swipe from right edge to open overlay
         let touchStartX = 0;
         document.addEventListener('touchstart', function(e) {
             touchStartX = e.touches[0].clientX;
@@ -1353,7 +1354,7 @@
         document.addEventListener('touchend', function(e) {
             if (!touchStartX || window.innerWidth > 768) return;
             const touchEndX = e.changedTouches[0].clientX;
-            const edgeZone = window.innerWidth - 40; // 40px from right edge
+            const edgeZone = window.innerWidth - 40;
             const swipeDistance = touchStartX - touchEndX;
             if (touchStartX > edgeZone && swipeDistance > 50) {
                 openNavOverlay();
