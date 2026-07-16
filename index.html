@@ -1406,13 +1406,19 @@
 
             slides = slideData;
 
-            const slidesHTML = slides.map((slide, idx) => `
-                <div class="carousel-slide${idx === 0 ? ' active' : ''}">
-                    <img src="${slide.src}" alt="${slide.title}">
-                    <h3 class="slide-title">${slide.title}</h3>
-                    <p class="slide-desc">${slide.desc}</p>
-                </div>
-            `).join('');
+            const slidesHTML = slides.map((slide, idx) => {
+                const imgTag = slide.linkUrl
+                    ? `<a href="${slide.linkUrl}" target="_blank"><img src="${slide.src}" alt="${slide.title}"></a>`
+                    : `<img src="${slide.src}" alt="${slide.title}">`;
+                const descBlock = slide.descHTML ? `<p class="slide-desc">${slide.descHTML}</p>` : '';
+                return `
+                    <div class="carousel-slide${idx === 0 ? ' active' : ''}">
+                        ${imgTag}
+                        <h3 class="slide-title">${slide.title}</h3>
+                        ${descBlock}
+                    </div>
+                `;
+            }).join('');
 
             const carouselHTML = `
                 <div class="carousel-container">
@@ -1430,16 +1436,15 @@
             leftArrow.className = 'carousel-arrow left';
             leftArrow.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
             leftArrow.onclick = () => changeSlide(-1);
+            carouselWrapper.appendChild(leftArrow);
 
             const rightArrow = document.createElement('button');
             rightArrow.className = 'carousel-arrow right';
             rightArrow.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
             rightArrow.onclick = () => changeSlide(1);
-
-            carouselWrapper.appendChild(leftArrow);
             carouselWrapper.appendChild(rightArrow);
 
-            // Extra project description (if an analysis-desc exists)
+            // Extra project description (if an .analysis-desc exists)
             if (extraDescHTML) {
                 const descEl = document.createElement('div');
                 descEl.className = 'overlay-description';
@@ -1474,7 +1479,6 @@
         }
 
         function openProjectOverlay(card) {
-            // Read data from the new HTML structure
             const placeholders = card.querySelectorAll('.analysis-chart-placeholder');
             const slideData = [];
 
@@ -1483,17 +1487,30 @@
                 if (!img) return;
 
                 const title = img.alt || 'Chart';
-                // Get all text content of the placeholder, then remove the img's alt? Better: get text nodes directly
-                // Clone the placeholder, remove the img, and get the remaining text
+
+                // Check if the image is wrapped in a link
+                const parentAnchor = img.closest('a');
+                const linkUrl = parentAnchor ? parentAnchor.getAttribute('href') : null;
+
+                // Get the description HTML – remove the image (and its wrapping anchor if present and empty)
                 const clone = placeholder.cloneNode(true);
                 const cloneImg = clone.querySelector('img');
-                if (cloneImg) cloneImg.remove();
-                const desc = clone.textContent.trim();
+                if (cloneImg) {
+                    const cloneParentAnchor = cloneImg.closest('a');
+                    if (cloneParentAnchor && cloneParentAnchor === cloneImg.parentNode && cloneParentAnchor.childNodes.length === 1) {
+                        // The anchor only contains the image → remove the whole anchor
+                        cloneParentAnchor.remove();
+                    } else {
+                        cloneImg.remove();
+                    }
+                }
+                const descHTML = clone.innerHTML.trim();
 
                 slideData.push({
                     src: img.src,
                     title: title,
-                    desc: desc || 'No description provided.'
+                    descHTML: descHTML,
+                    linkUrl: linkUrl
                 });
             });
 
