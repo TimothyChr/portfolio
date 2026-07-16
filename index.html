@@ -505,6 +505,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            padding-left: 60px;   /* space for left arrow */
+            padding-right: 60px;  /* space for right arrow */
         }
         .carousel-slides {
             position: relative;
@@ -1346,8 +1348,6 @@
                             </div>
                         `).join('')}
                     </div>
-                    <button class="carousel-arrow left" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
-                    <button class="carousel-arrow right" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
                     <div class="carousel-dots">
                         ${slides.map((_, idx) => `
                             <span class="carousel-dot${idx === 0 ? ' active' : ''}" onclick="goToSlide(${idx})"></span>
@@ -1359,6 +1359,19 @@
             const carouselDiv = document.createElement('div');
             carouselDiv.innerHTML = carouselHTML;
             overlayContent.appendChild(carouselDiv);
+            
+            const leftArrow = document.createElement('button');
+            leftArrow.className = 'carousel-arrow left';
+            leftArrow.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
+            leftArrow.onclick = () => changeSlide(-1);
+
+            const rightArrow = document.createElement('button');
+            rightArrow.className = 'carousel-arrow right';
+            rightArrow.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+            rightArrow.onclick = () => changeSlide(1);
+
+            overlayContent.appendChild(leftArrow);
+            overlayContent.appendChild(rightArrow); 
             currentSlide = 0;
         }
 
