@@ -1121,27 +1121,10 @@
                     </div>
                     <div class="project-analysis">
                         <div class="analysis-charts-column">
-                            <div class="analysis-chart-placeholder"><img src="DEEPP1.png" alt="Descriptive">Is there anything to be revealed?</div>
-                            <div class="analysis-chart-placeholder"><img src="DEEPP2.png" alt="RPR"></div>
-                            <div class="analysis-chart-placeholder"><img src="DEEPP3.png" alt="Cohort"></div>
-                            <div class="analysis-chart-placeholder"><img src="DEEPP4.png" alt="Funnel"></div>
-                        </div>
-                        <div class="analysis-desc">
-                            <strong>About:</strong> Market performance analysis focus on platform performance.
-                            Data used from <a href="https://mavenanalytics.io/data-playground/toy-store-e-commerce-database">MarvenAnalytics</a>.
-                            <br><br>
-                            <strong>Tools:</strong>
-                            <ol>
-                                <li>Tableau: Descriptive Analysis, EDA, Data Visualization, Interactive Dashboard</li>
-                                <li>Excel: Data Visualization, Presentation Assets</li>
-                                <li>Collabs: Data Preparation, Funnel Analysis</li>
-                                <li>BigQuery: Cohort Analysis</li>
-                            </ol>
-                            <br>
-                            <strong>Results: </strong>
-                            Leak emerge when I found there is gap between desktop and mobile users. 
-                            After digging deeper, I found from funnel analysis that the e-commerce platform have high bounce rate.
-                            To verify it, I analyzed the average session time and found that the customers having hard time finding the product catalogue.
+                            <div class="analysis-chart-placeholder"><img src="DEEPP1.png" alt="Descriptive">Description 1: Explaining Chart 1</div> <!-- Noticed here that the alt could be the titles, then inside <div></div> could be the description -->
+                            <div class="analysis-chart-placeholder"><img src="DEEPP2.png" alt="RPR">Description 2: Explaining Chart 2</div> <!-- Noticed here that the alt could be the titles, then inside <div></div> could be the description -->
+                            <div class="analysis-chart-placeholder"><img src="DEEPP3.png" alt="Cohort">Description 3: Explaining Chart 3</div> <!-- Noticed here that the alt could be the titles, then inside <div></div> could be the description -->
+                            <div class="analysis-chart-placeholder"><img src="DEEPP4.png" alt="Funnel">Description 4: Explaining Chart 4</div> <!-- Noticed here that the alt could be the titles, then inside <div></div> could be the description -->
                         </div>
                     </div>
                 </div>
@@ -1377,11 +1360,11 @@
             box.classList.toggle('expanded');
         }
 
-        // ---------- Project Carousel (reads from HTML, NOT hardcoded) ----------
+        // ---------- Project Carousel (reads titles & descriptions from the HTML) ----------
         let currentSlide = 0;
         let slides = [];
 
-        function buildCarousel(chartImgs, projectTitle, projectDescHTML) {
+        function buildCarousel(slideData, projectTitle, extraDescHTML) {
             const overlayContent = document.getElementById('overlayContent');
             const closeBtn = overlayContent.querySelector('.overlay-close');
             overlayContent.innerHTML = '';
@@ -1398,24 +1381,24 @@
             carouselWrapper.className = 'carousel-wrapper';
             overlayContent.appendChild(carouselWrapper);
 
-            if (chartImgs.length === 0) {
+            if (slideData.length === 0) {
                 carouselWrapper.innerHTML = '<p style="color:var(--silver); text-align:center;">No charts available.</p>';
-                const descEl = document.createElement('div');
-                descEl.className = 'overlay-description';
-                descEl.innerHTML = projectDescHTML;
-                overlayContent.appendChild(descEl);
+                if (extraDescHTML) {
+                    const descEl = document.createElement('div');
+                    descEl.className = 'overlay-description';
+                    descEl.innerHTML = extraDescHTML;
+                    overlayContent.appendChild(descEl);
+                }
                 return;
             }
 
-            slides = chartImgs.map(img => ({
-                src: img.src,
-                alt: img.alt || 'Chart'
-            }));
+            slides = slideData;
 
             const slidesHTML = slides.map((slide, idx) => `
                 <div class="carousel-slide${idx === 0 ? ' active' : ''}">
-                    <img src="${slide.src}" alt="${slide.alt}">
-                    <p class="carousel-caption">${slide.alt}</p>
+                    <img src="${slide.src}" alt="${slide.title}">
+                    <h3 class="slide-title">${slide.title}</h3>
+                    <p class="slide-desc">${slide.desc}</p>
                 </div>
             `).join('');
 
@@ -1444,11 +1427,13 @@
             carouselWrapper.appendChild(leftArrow);
             carouselWrapper.appendChild(rightArrow);
 
-            // Project description
-            const descEl = document.createElement('div');
-            descEl.className = 'overlay-description';
-            descEl.innerHTML = projectDescHTML;
-            overlayContent.appendChild(descEl);
+            // Extra project description (if an analysis-desc exists)
+            if (extraDescHTML) {
+                const descEl = document.createElement('div');
+                descEl.className = 'overlay-description';
+                descEl.innerHTML = extraDescHTML;
+                overlayContent.appendChild(descEl);
+            }
 
             currentSlide = 0;
         }
@@ -1477,10 +1462,34 @@
         }
 
         function openProjectOverlay(card) {
-            const chartImages = card.querySelectorAll('.analysis-chart-placeholder img');
+            // Read data from the new HTML structure
+            const placeholders = card.querySelectorAll('.analysis-chart-placeholder');
+            const slideData = [];
+
+            placeholders.forEach(placeholder => {
+                const img = placeholder.querySelector('img');
+                if (!img) return;
+
+                const title = img.alt || 'Chart';
+                // Get all text content of the placeholder, then remove the img's alt? Better: get text nodes directly
+                // Clone the placeholder, remove the img, and get the remaining text
+                const clone = placeholder.cloneNode(true);
+                const cloneImg = clone.querySelector('img');
+                if (cloneImg) cloneImg.remove();
+                const desc = clone.textContent.trim();
+
+                slideData.push({
+                    src: img.src,
+                    title: title,
+                    desc: desc || 'No description provided.'
+                });
+            });
+
             const projectTitle = card.querySelector('.project-title').textContent;
-            const projectDesc = card.querySelector('.analysis-desc').innerHTML;
-            buildCarousel(Array.from(chartImages), projectTitle, projectDesc);
+            const extraDesc = card.querySelector('.analysis-desc');
+            const extraDescHTML = extraDesc ? extraDesc.innerHTML : null;
+
+            buildCarousel(slideData, projectTitle, extraDescHTML);
             document.getElementById('projectOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
