@@ -505,8 +505,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding-left: 60px;   /* space for left arrow */
-            padding-right: 60px;  /* space for right arrow */
+            padding-left: 60px;
+            padding-right: 60px;
         }
         .carousel-slides {
             position: relative;
@@ -531,8 +531,8 @@
         }
         .carousel-slide img {
             max-width: 100%;
-            max-height: 55vh;      /* Changed from 400px to flexible viewport height */
-            width: auto;           /* Add this */
+            max-height: 55vh;
+            width: auto;
             height: auto;
             object-fit: contain;
             border-radius: var(--radius-sm);
@@ -986,7 +986,6 @@
 
     <main class="main-content">
 
-        <!-- Your existing sections: about, journey, etc. remain exactly the same -->
         <section id="about">
             <h2 class="section-title">About Me</h2>
             <div class="about-container">
@@ -1075,6 +1074,8 @@
         <section id="projects">
             <h2 class="section-title">Project</h2>
             <div class="projects-grid">
+
+                <!-- Project 1 (original) -->
                 <div class="project-card" onclick="openProjectOverlay(this)">
                     <div class="project-card-header">
                         <div class="project-chart-placeholder">
@@ -1082,6 +1083,46 @@
                         </div>
                         <div class="project-info">
                             <p class="project-title">Toy E-Commerce Performance Analysis</p>
+                            <p class="project-short-desc">
+                                Analyzing the performance of e-commerce platform to convert buyers efficiently.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="project-analysis">
+                        <div class="analysis-charts-column">
+                            <div class="analysis-chart-placeholder"><img src="DEEPP1.png" alt="Descriptive"></div>
+                            <div class="analysis-chart-placeholder"><img src="DEEPP2.png" alt="RPR"></div>
+                            <div class="analysis-chart-placeholder"><img src="DEEPP3.png" alt="Cohort"></div>
+                            <div class="analysis-chart-placeholder"><img src="DEEPP4.png" alt="Funnel"></div>
+                        </div>
+                        <div class="analysis-desc">
+                            <strong>About:</strong> Market performance analysis focus on platform performance.
+                            Data used from <a href="https://mavenanalytics.io/data-playground/toy-store-e-commerce-database">MarvenAnalytics</a>.
+                            <br><br>
+                            <strong>Tools:</strong>
+                            <ol>
+                                <li>Tableau: Descriptive Analysis, EDA, Data Visualization, Interactive Dashboard</li>
+                                <li>Excel: Data Visualization, Presentation Assets</li>
+                                <li>Collabs: Data Preparation, Funnel Analysis</li>
+                                <li>BigQuery: Cohort Analysis</li>
+                            </ol>
+                            <br>
+                            <strong>Results: </strong>
+                            Leak emerge when I found there is gap between desktop and mobile users. 
+                            After digging deeper, I found from funnel analysis that the e-commerce platform have high bounce rate.
+                            To verify it, I analyzed the average session time and found that the customers having hard time finding the product catalogue.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 (copy with same content, just renamed title) -->
+                <div class="project-card" onclick="openProjectOverlay(this)">
+                    <div class="project-card-header">
+                        <div class="project-chart-placeholder">
+                            <img src="Logo Joybox.png" alt="Joybox" class="responsive-img">
+                        </div>
+                        <div class="project-info">
+                            <p class="project-title">Project 2</p>
                             <p class="project-short-desc">
                                 Analyzing the performance of e-commerce platform to convert buyers efficiently.
                             </p>
@@ -1268,11 +1309,11 @@
         </nav>
     </div>
 
-    <!-- Project overlay modal (now a carousel) -->
+    <!-- Project overlay modal (carousel) -->
     <div id="projectOverlay" class="overlay" onclick="closeOverlay(event)">
         <div class="overlay-content" id="overlayContent" onclick="event.stopPropagation()">
             <button class="overlay-close" onclick="closeOverlayDirect()">&times;</button>
-            <!-- Carousel will be injected here dynamically -->
+            <!-- Carousel injected dynamically -->
         </div>
     </div>
 
@@ -1308,7 +1349,7 @@
             box.classList.toggle('expanded');
         }
 
-        // ---------- Project Carousel ----------
+        // ---------- Project Carousel (works for any number of project cards) ----------
         let currentSlide = 0;
         let slides = [];
 
@@ -1327,12 +1368,10 @@
             // Build slides data with auto-generated titles/descriptions
             slides = chartImgs.map((img, index) => {
                 const alt = img.alt || `Chart ${index+1}`;
-                const title = alt;
-                const desc = getDescriptionForAlt(alt);
                 return {
                     src: img.src,
-                    title: title,
-                    desc: desc
+                    title: alt,
+                    desc: getDescriptionForAlt(alt)
                 };
             });
 
@@ -1401,12 +1440,10 @@
         }
 
         function updateCarouselDisplay() {
-            const allSlides = document.querySelectorAll('.carousel-slide');
-            const allDots = document.querySelectorAll('.carousel-dot');
-            allSlides.forEach((slide, i) => {
+            document.querySelectorAll('.carousel-slide').forEach((slide, i) => {
                 slide.classList.toggle('active', i === currentSlide);
             });
-            allDots.forEach((dot, i) => {
+            document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
                 dot.classList.toggle('active', i === currentSlide);
             });
         }
@@ -1435,7 +1472,7 @@
             }
         });
 
-        // ---------- Mobile navigation overlay (unchanged) ----------
+        // ---------- Mobile navigation overlay ----------
         const navToggleBtn = document.getElementById('navToggleBtn');
         const navOverlay = document.getElementById('navOverlay');
         const navBackdrop = document.getElementById('navBackdrop');
