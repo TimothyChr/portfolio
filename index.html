@@ -22,7 +22,6 @@
             --font: 'Play', sans-serif;
             --left-pad: 20%;
             --content-width: 60%;
-            --sidebar-width: 20%;
         }
 
         * {
@@ -61,9 +60,9 @@
             background: var(--bg);
         }
 
-        /* Desktop floating navigation panel – fixed on screen, always visible */
+        /* Desktop floating navigation panel */
         .desktop-nav-float {
-            display: none; /* hidden by default, shown in desktop media query */
+            display: none;
             position: fixed;
             top: 30px;
             right: 20px;
@@ -386,7 +385,7 @@
             border-color: #fff;
         }
 
-        /* ========== PROJECTS (Cards and Overlay) ========== */
+        /* ========== PROJECTS (Cards) ========== */
         #projects {
             scroll-margin-top: 30px;
             margin-top: 25px;
@@ -433,17 +432,6 @@
             max-height: 100%;
             object-fit: contain;
         }
-        .mini-bar {
-            width: 12px;
-            background: #fff;
-            border-radius: 3px 3px 0 0;
-            opacity: 0.8;
-            transition: var(--transition);
-        }
-        .project-card:hover .mini-bar {
-            opacity: 1;
-            background: var(--gold);
-        }
         .project-info .project-title {
             font-weight: 700;
             font-size: 1.05rem;
@@ -459,6 +447,7 @@
             display: none !important;
         }
 
+        /* ========== OVERLAY & CAROUSEL ========== */
         .overlay {
             position: fixed;
             top: 0;
@@ -479,16 +468,16 @@
         .overlay-content {
             background: var(--shape);
             border-radius: var(--radius);
-            padding: 36px;
-            max-width: 1100px;
+            padding: 40px 20px 30px;
             width: 100%;
+            max-width: 900px;
             max-height: 90vh;
-            overflow-y: auto;
-            display: flex;
-            gap: 32px;
             position: relative;
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
             border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .overlay-close {
             position: absolute;
@@ -506,41 +495,105 @@
             color: #fff;
             transform: scale(1.2);
         }
-        .overlay-charts {
+
+        /* Carousel inside overlay */
+        .carousel-container {
+            position: relative;
+            width: 100%;
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            overflow-y: auto;
-            max-height: 70vh;
             align-items: center;
+            justify-content: center;
         }
-        .overlay-charts img {
+        .carousel-slides {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .carousel-slide {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            padding: 0 40px;
+        }
+        .carousel-slide.active {
+            display: flex;
+        }
+        .carousel-slide img {
             max-width: 100%;
-            height: auto;
-            max-height: 700px;
+            max-height: 400px;
             object-fit: contain;
             border-radius: var(--radius-sm);
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255,255,255,0.05);
             padding: 8px;
+            margin-bottom: 20px;
         }
-        .overlay-info {
-            flex: 0 0 300px;
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-        .overlay-info .modal-title {
-            font-size: 1.6rem;
-            font-weight: 700;
+        .carousel-slide h3 {
+            font-size: 1.4rem;
             color: var(--gold);
-            line-height: 1.3;
+            margin-bottom: 10px;
         }
-        .overlay-info .modal-desc {
-            font-size: 0.95rem;
+        .carousel-slide p {
+            font-size: 0.9rem;
             color: var(--silver);
-            line-height: 1.7;
-            flex: 1;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(45,45,45,0.9);
+            border: 2px solid rgba(255,255,255,0.3);
+            color: #fff;
+            font-size: 1.5rem;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        .carousel-arrow:hover {
+            background: var(--shape);
+            border-color: #fff;
+        }
+        .carousel-arrow.left {
+            left: 10px;
+        }
+        .carousel-arrow.right {
+            right: 10px;
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--silver);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .carousel-dot.active {
+            background: var(--gold);
+            transform: scale(1.2);
         }
 
         /* ========== CULTURES & HOBBIES ========== */
@@ -646,7 +699,7 @@
 
         /* ---------- Mobile Navigation Overlay & Button ---------- */
         .nav-toggle-btn {
-            display: none; /* hidden by default, shown on mobile */
+            display: none;
             position: fixed;
             right: 0;
             top: 50%;
@@ -669,7 +722,7 @@
             font-size: 0.9rem;
         }
         .nav-overlay {
-            display: none; /* hidden by default, shown on mobile when opened */
+            display: none;
             position: fixed;
             top: 0;
             right: 0;
@@ -745,21 +798,11 @@
                 font-size: 1.2rem;
             }
             .overlay-content {
-                flex-direction: column;
-                max-height: 85vh;
-            }
-            .overlay-info {
-                flex: auto;
-                order: -1;
-            }
-            .overlay-charts {
-                max-height: none;
-                order: 0;
+                max-width: 95%;
             }
         }
 
         @media screen and (min-width: 769px) {
-            /* Desktop: show the floating navigation panel, hide mobile stuff */
             .desktop-nav-float {
                 display: block;
             }
@@ -776,11 +819,9 @@
             .left-blank {
                 display: none;
             }
-            /* Hide desktop floating panel on mobile */
             .desktop-nav-float {
                 display: none !important;
             }
-            /* Show mobile nav toggle (hidden by default, visible on activity) */
             .nav-toggle-btn {
                 display: flex;
                 opacity: 0;
@@ -790,7 +831,6 @@
                 opacity: 1;
                 visibility: visible;
             }
-            /* When overlay open, force hide the toggle button */
             .nav-toggle-btn.overlay-open {
                 opacity: 0 !important;
                 visibility: hidden !important;
@@ -894,17 +934,15 @@
                 font-size: 1.1rem;
             }
             .overlay-content {
-                flex-direction: column;
-                padding: 20px;
-                gap: 20px;
+                padding: 30px 10px 20px;
             }
-            .overlay-info {
-                order: -1;
-                flex: auto;
+            .carousel-arrow {
+                width: 36px;
+                height: 36px;
+                font-size: 1.2rem;
             }
-            .overlay-charts {
-                max-height: 50vh;
-                overflow-y: auto;
+            .carousel-slide img {
+                max-height: 250px;
             }
         }
 
@@ -937,6 +975,7 @@
 
     <main class="main-content">
 
+        <!-- Your existing sections: about, journey, etc. remain exactly the same -->
         <section id="about">
             <h2 class="section-title">About Me</h2>
             <div class="about-container">
@@ -1164,7 +1203,6 @@
                     <i class="fa-brands fa-linkedin-in"></i>
                 </a>
             </div>
-            <!-- Traffic counter moved here -->
             <div class="traffic-panel" style="margin: 20px auto; max-width: 300px;">
                 <p class="traffic-title">Traffic</p>
                 <div class="traffic-row">
@@ -1184,7 +1222,7 @@
 
     </main>
 
-    <!-- Desktop floating navigation panel (always visible on screens wider than 768px) -->
+    <!-- Desktop floating navigation panel -->
     <div class="desktop-nav-float">
         <nav class="nav-panel" id="navPanelDesktop">
             <p class="nav-title">Navigate</p>
@@ -1203,11 +1241,7 @@
     <button class="nav-toggle-btn" id="navToggleBtn" aria-label="Open navigation">
         <i class="fa-solid fa-chevron-left"></i>
     </button>
-
-    <!-- Backdrop for overlay -->
     <div class="nav-backdrop" id="navBackdrop"></div>
-
-    <!-- Mobile navigation overlay -->
     <div class="nav-overlay" id="navOverlay">
         <button class="nav-overlay-close" id="navOverlayClose" aria-label="Close navigation">&times;</button>
         <nav class="nav-panel">
@@ -1223,15 +1257,11 @@
         </nav>
     </div>
 
-    <!-- Project overlay modal -->
+    <!-- Project overlay modal (now a carousel) -->
     <div id="projectOverlay" class="overlay" onclick="closeOverlay(event)">
-        <div class="overlay-content" onclick="event.stopPropagation()">
+        <div class="overlay-content" id="overlayContent" onclick="event.stopPropagation()">
             <button class="overlay-close" onclick="closeOverlayDirect()">&times;</button>
-            <div class="overlay-charts" id="overlayCharts"></div>
-            <div class="overlay-info">
-                <h3 class="modal-title" id="overlayTitle"></h3>
-                <p class="modal-desc" id="overlayDesc"></p>
-            </div>
+            <!-- Carousel will be injected here dynamically -->
         </div>
     </div>
 
@@ -1267,32 +1297,101 @@
             box.classList.toggle('expanded');
         }
 
-        // ---------- Project overlay ----------
-        function openProjectOverlay(card) {
-            const title = card.querySelector('.project-title').textContent;
-            const desc = card.querySelector('.analysis-desc').innerHTML;
-            const chartImages = card.querySelectorAll('.analysis-chart-placeholder img');
-            
-            const chartsContainer = document.getElementById('overlayCharts');
-            chartsContainer.innerHTML = '';
-            
-            if (chartImages.length > 0) {
-                chartImages.forEach(img => {
-                    const clonedImg = document.createElement('img');
-                    clonedImg.src = img.src;
-                    clonedImg.alt = img.alt;
-                    clonedImg.style.maxWidth = '100%';
-                    clonedImg.style.height = 'auto';
-                    clonedImg.style.maxHeight = '700px';
-                    clonedImg.style.objectFit = 'contain';
-                    chartsContainer.appendChild(clonedImg);
-                });
-            } else {
-                chartsContainer.innerHTML = '<p style="color:var(--silver); text-align:center;">No charts available.</p>';
+        // ---------- Project Carousel ----------
+        let currentSlide = 0;
+        let slides = [];
+
+        function buildCarousel(chartImgs) {
+            const overlayContent = document.getElementById('overlayContent');
+            // Remove any existing carousel elements (except the close button)
+            const closeBtn = overlayContent.querySelector('.overlay-close');
+            overlayContent.innerHTML = '';
+            if (closeBtn) overlayContent.appendChild(closeBtn);
+
+            if (chartImgs.length === 0) {
+                overlayContent.innerHTML += '<p style="color:var(--silver); text-align:center;">No charts available.</p>';
+                return;
             }
-            
-            document.getElementById('overlayTitle').textContent = title;
-            document.getElementById('overlayDesc').innerHTML = desc;
+
+            // Build slides data with auto-generated titles/descriptions
+            slides = chartImgs.map((img, index) => {
+                const alt = img.alt || `Chart ${index+1}`;
+                const title = alt;
+                const desc = getDescriptionForAlt(alt);
+                return {
+                    src: img.src,
+                    title: title,
+                    desc: desc
+                };
+            });
+
+            // Create carousel structure
+            const carouselHTML = `
+                <div class="carousel-container">
+                    <div class="carousel-slides">
+                        ${slides.map((slide, idx) => `
+                            <div class="carousel-slide${idx === 0 ? ' active' : ''}">
+                                <img src="${slide.src}" alt="${slide.title}">
+                                <h3>${slide.title}</h3>
+                                <p>${slide.desc}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="carousel-arrow left" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="carousel-arrow right" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
+                    <div class="carousel-dots">
+                        ${slides.map((_, idx) => `
+                            <span class="carousel-dot${idx === 0 ? ' active' : ''}" onclick="goToSlide(${idx})"></span>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            const carouselDiv = document.createElement('div');
+            carouselDiv.innerHTML = carouselHTML;
+            overlayContent.appendChild(carouselDiv);
+            currentSlide = 0;
+        }
+
+        function getDescriptionForAlt(alt) {
+            const descriptions = {
+                'Descriptive': 'Overview of key performance metrics and trends across the dataset.',
+                'RPR': 'Repeat Purchase Rate analysis showing customer retention patterns.',
+                'Cohort': 'Cohort analysis tracking user behavior over time.',
+                'Funnel': 'Funnel analysis identifying drop-off points in the conversion process.',
+                'default': 'Detailed data visualization supporting the analysis.'
+            };
+            return descriptions[alt] || descriptions['default'];
+        }
+
+        function changeSlide(direction) {
+            const totalSlides = slides.length;
+            if (totalSlides === 0) return;
+            currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+            updateCarouselDisplay();
+        }
+
+        function goToSlide(index) {
+            if (index >= 0 && index < slides.length) {
+                currentSlide = index;
+                updateCarouselDisplay();
+            }
+        }
+
+        function updateCarouselDisplay() {
+            const allSlides = document.querySelectorAll('.carousel-slide');
+            const allDots = document.querySelectorAll('.carousel-dot');
+            allSlides.forEach((slide, i) => {
+                slide.classList.toggle('active', i === currentSlide);
+            });
+            allDots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+        }
+
+        function openProjectOverlay(card) {
+            const chartImages = card.querySelectorAll('.analysis-chart-placeholder img');
+            buildCarousel(Array.from(chartImages));
             document.getElementById('projectOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
@@ -1314,7 +1413,7 @@
             }
         });
 
-        // ---------- Mobile navigation overlay ----------
+        // ---------- Mobile navigation overlay (unchanged) ----------
         const navToggleBtn = document.getElementById('navToggleBtn');
         const navOverlay = document.getElementById('navOverlay');
         const navBackdrop = document.getElementById('navBackdrop');
@@ -1338,10 +1437,9 @@
         navOverlayClose.addEventListener('click', closeNavOverlay);
         navBackdrop.addEventListener('click', closeNavOverlay);
 
-        // ---------- Activity-based toggle visibility (mobile only) ----------
         let activityTimer;
         function showToggleTemporarily() {
-            if (window.innerWidth > 768) return; // only mobile
+            if (window.innerWidth > 768) return;
             navToggleBtn.classList.add('visible');
             clearTimeout(activityTimer);
             activityTimer = setTimeout(() => {
@@ -1353,7 +1451,6 @@
         document.addEventListener('touchstart', showToggleTemporarily, { passive: true });
         document.addEventListener('click', showToggleTemporarily);
 
-        // Swipe from right edge to open overlay
         let touchStartX = 0;
         document.addEventListener('touchstart', function(e) {
             touchStartX = e.touches[0].clientX;
@@ -1370,7 +1467,7 @@
             touchStartX = 0;
         });
 
-        // ---------- Navigation active link (works for both desktop and mobile) ----------
+        // ---------- Navigation active link ----------
         function setActiveLink(link) {
             document.querySelectorAll('.nav-panel ul li a').forEach(a => a.classList.remove('active'));
             link.classList.add('active');
