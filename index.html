@@ -510,10 +510,11 @@
             position: relative;
             width: 100%;
             overflow: hidden;
-            min-height: 500px;
+            min-height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 0 60px;
         }
         .carousel-slide {
             display: none;
@@ -521,14 +522,16 @@
             align-items: center;
             text-align: center;
             width: 100%;
-            padding: 0 40px;
+            padding: 0 10px;
         }
         .carousel-slide.active {
             display: flex;
         }
         .carousel-slide img {
             max-width: 100%;
-            max-height: 400px;
+            max-height: 55vh;      /* Changed from 400px to flexible viewport height */
+            width: auto;           /* Add this */
+            height: auto;
             object-fit: contain;
             border-radius: var(--radius-sm);
             background: rgba(255,255,255,0.05);
