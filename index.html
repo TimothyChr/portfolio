@@ -478,6 +478,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow-y: auto;
         }
         .overlay-close {
             position: absolute;
@@ -494,6 +495,44 @@
         .overlay-close:hover {
             color: #fff;
             transform: scale(1.2);
+        }
+
+        .overlay-project-title {
+            font-size: 1.8rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .overlay-description {
+            color: var(--silver);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            width: 100%;
+            margin-top: 24px;
+            padding: 0 10px;
+            text-align: left;
+        }
+        .overlay-description strong {
+            color: var(--gold);
+        }
+        .overlay-description a {
+            color: var(--gold);
+            text-decoration: underline;
+        }
+        .overlay-description ol {
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+
+        .carousel-wrapper {
+            width: 100%;
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         /* Carousel inside overlay */
@@ -516,7 +555,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 60px;
         }
         .carousel-slide {
             display: none;
@@ -538,19 +576,12 @@
             border-radius: var(--radius-sm);
             background: rgba(255,255,255,0.05);
             padding: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 8px;
         }
-        .carousel-slide h3 {
-            font-size: 1.4rem;
-            color: var(--gold);
-            margin-bottom: 10px;
-        }
-        .carousel-slide p {
+        .carousel-caption {
+            margin-top: 4px;
             font-size: 0.9rem;
             color: var(--silver);
-            line-height: 1.6;
-            max-width: 600px;
-            margin: 0 auto;
         }
 
         .carousel-arrow {
@@ -1075,7 +1106,7 @@
             <h2 class="section-title">Project</h2>
             <div class="projects-grid">
 
-                <!-- Project 1 (original) -->
+                <!-- Project 1 -->
                 <div class="project-card" onclick="openProjectOverlay(this)">
                     <div class="project-card-header">
                         <div class="project-chart-placeholder">
@@ -1115,7 +1146,7 @@
                     </div>
                 </div>
 
-                <!-- Project 2 (copy with same content, just renamed title) -->
+                <!-- Project 2 (you can customize everything here) -->
                 <div class="project-card" onclick="openProjectOverlay(this)">
                     <div class="project-card-header">
                         <div class="project-chart-placeholder">
@@ -1124,33 +1155,30 @@
                         <div class="project-info">
                             <p class="project-title">Project 2</p>
                             <p class="project-short-desc">
-                                Analyzing the performance of e-commerce platform to convert buyers efficiently.
+                                You can change this short description to whatever you want.
                             </p>
                         </div>
                     </div>
                     <div class="project-analysis">
                         <div class="analysis-charts-column">
-                            <div class="analysis-chart-placeholder"><img src="DEEPP1.png" alt="Descriptive"></div>
-                            <div class="analysis-chart-placeholder"><img src="DEEPP2.png" alt="RPR"></div>
-                            <div class="analysis-chart-placeholder"><img src="DEEPP3.png" alt="Cohort"></div>
-                            <div class="analysis-chart-placeholder"><img src="DEEPP4.png" alt="Funnel"></div>
+                            <div class="analysis-chart-placeholder"><img src="DEEPP1.png" alt="Chart A"></div>
+                            <div class="analysis-chart-placeholder"><img src="DEEPP2.png" alt="Chart B"></div>
+                            <div class="analysis-chart-placeholder"><img src="DEEPP3.png" alt="Chart C"></div>
+                            <div class="analysis-chart-placeholder"><img src="DEEPP4.png" alt="Chart D"></div>
                         </div>
                         <div class="analysis-desc">
-                            <strong>About:</strong> Market performance analysis focus on platform performance.
-                            Data used from <a href="https://mavenanalytics.io/data-playground/toy-store-e-commerce-database">MarvenAnalytics</a>.
+                            <strong>About:</strong> This is a completely different project with its own description.
                             <br><br>
                             <strong>Tools:</strong>
                             <ol>
-                                <li>Tableau: Descriptive Analysis, EDA, Data Visualization, Interactive Dashboard</li>
-                                <li>Excel: Data Visualization, Presentation Assets</li>
-                                <li>Collabs: Data Preparation, Funnel Analysis</li>
-                                <li>BigQuery: Cohort Analysis</li>
+                                <li>Python: Data Processing and Analysis</li>
+                                <li>Tableau: Interactive Dashboard</li>
+                                <li>SQL: Data Extraction</li>
                             </ol>
                             <br>
                             <strong>Results: </strong>
-                            Leak emerge when I found there is gap between desktop and mobile users. 
-                            After digging deeper, I found from funnel analysis that the e-commerce platform have high bounce rate.
-                            To verify it, I analyzed the average session time and found that the customers having hard time finding the product catalogue.
+                            This text can be totally different from Project 1. 
+                            Each project card now shows its own unique content in the popup.
                         </div>
                     </div>
                 </div>
@@ -1309,11 +1337,11 @@
         </nav>
     </div>
 
-    <!-- Project overlay modal (carousel) -->
+    <!-- Project overlay modal -->
     <div id="projectOverlay" class="overlay" onclick="closeOverlay(event)">
         <div class="overlay-content" id="overlayContent" onclick="event.stopPropagation()">
             <button class="overlay-close" onclick="closeOverlayDirect()">&times;</button>
-            <!-- Carousel injected dynamically -->
+            <!-- Content injected dynamically -->
         </div>
     </div>
 
@@ -1349,56 +1377,60 @@
             box.classList.toggle('expanded');
         }
 
-        // ---------- Project Carousel (works for any number of project cards) ----------
+        // ---------- Project Carousel (reads from HTML, NOT hardcoded) ----------
         let currentSlide = 0;
         let slides = [];
 
-        function buildCarousel(chartImgs) {
+        function buildCarousel(chartImgs, projectTitle, projectDescHTML) {
             const overlayContent = document.getElementById('overlayContent');
-            // Remove any existing carousel elements (except the close button)
             const closeBtn = overlayContent.querySelector('.overlay-close');
             overlayContent.innerHTML = '';
             if (closeBtn) overlayContent.appendChild(closeBtn);
 
+            // Project title
+            const titleEl = document.createElement('h2');
+            titleEl.className = 'overlay-project-title';
+            titleEl.textContent = projectTitle;
+            overlayContent.appendChild(titleEl);
+
+            // Carousel wrapper
+            const carouselWrapper = document.createElement('div');
+            carouselWrapper.className = 'carousel-wrapper';
+            overlayContent.appendChild(carouselWrapper);
+
             if (chartImgs.length === 0) {
-                overlayContent.innerHTML += '<p style="color:var(--silver); text-align:center;">No charts available.</p>';
+                carouselWrapper.innerHTML = '<p style="color:var(--silver); text-align:center;">No charts available.</p>';
+                const descEl = document.createElement('div');
+                descEl.className = 'overlay-description';
+                descEl.innerHTML = projectDescHTML;
+                overlayContent.appendChild(descEl);
                 return;
             }
 
-            // Build slides data with auto-generated titles/descriptions
-            slides = chartImgs.map((img, index) => {
-                const alt = img.alt || `Chart ${index+1}`;
-                return {
-                    src: img.src,
-                    title: alt,
-                    desc: getDescriptionForAlt(alt)
-                };
-            });
+            slides = chartImgs.map(img => ({
+                src: img.src,
+                alt: img.alt || 'Chart'
+            }));
 
-            // Create carousel structure
+            const slidesHTML = slides.map((slide, idx) => `
+                <div class="carousel-slide${idx === 0 ? ' active' : ''}">
+                    <img src="${slide.src}" alt="${slide.alt}">
+                    <p class="carousel-caption">${slide.alt}</p>
+                </div>
+            `).join('');
+
             const carouselHTML = `
                 <div class="carousel-container">
-                    <div class="carousel-slides">
-                        ${slides.map((slide, idx) => `
-                            <div class="carousel-slide${idx === 0 ? ' active' : ''}">
-                                <img src="${slide.src}" alt="${slide.title}">
-                                <h3>${slide.title}</h3>
-                                <p>${slide.desc}</p>
-                            </div>
-                        `).join('')}
-                    </div>
+                    <div class="carousel-slides">${slidesHTML}</div>
                     <div class="carousel-dots">
-                        ${slides.map((_, idx) => `
-                            <span class="carousel-dot${idx === 0 ? ' active' : ''}" onclick="goToSlide(${idx})"></span>
-                        `).join('')}
+                        ${slides.map((_, idx) => `<span class="carousel-dot${idx === 0 ? ' active' : ''}" onclick="goToSlide(${idx})"></span>`).join('')}
                     </div>
                 </div>
             `;
 
-            const carouselDiv = document.createElement('div');
-            carouselDiv.innerHTML = carouselHTML;
-            overlayContent.appendChild(carouselDiv);
-            
+            carouselWrapper.innerHTML = carouselHTML;
+
+            // Arrows
             const leftArrow = document.createElement('button');
             leftArrow.className = 'carousel-arrow left';
             leftArrow.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
@@ -1409,20 +1441,16 @@
             rightArrow.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
             rightArrow.onclick = () => changeSlide(1);
 
-            overlayContent.appendChild(leftArrow);
-            overlayContent.appendChild(rightArrow); 
-            currentSlide = 0;
-        }
+            carouselWrapper.appendChild(leftArrow);
+            carouselWrapper.appendChild(rightArrow);
 
-        function getDescriptionForAlt(alt) {
-            const descriptions = {
-                'Descriptive': 'Overview of key performance metrics and trends across the dataset.',
-                'RPR': 'Repeat Purchase Rate analysis showing customer retention patterns.',
-                'Cohort': 'Cohort analysis tracking user behavior over time.',
-                'Funnel': 'Funnel analysis identifying drop-off points in the conversion process.',
-                'default': 'Detailed data visualization supporting the analysis.'
-            };
-            return descriptions[alt] || descriptions['default'];
+            // Project description
+            const descEl = document.createElement('div');
+            descEl.className = 'overlay-description';
+            descEl.innerHTML = projectDescHTML;
+            overlayContent.appendChild(descEl);
+
+            currentSlide = 0;
         }
 
         function changeSlide(direction) {
@@ -1450,7 +1478,9 @@
 
         function openProjectOverlay(card) {
             const chartImages = card.querySelectorAll('.analysis-chart-placeholder img');
-            buildCarousel(Array.from(chartImages));
+            const projectTitle = card.querySelector('.project-title').textContent;
+            const projectDesc = card.querySelector('.analysis-desc').innerHTML;
+            buildCarousel(Array.from(chartImages), projectTitle, projectDesc);
             document.getElementById('projectOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
